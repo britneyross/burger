@@ -4,6 +4,7 @@ var data;
 var executeQuery = function (sql, callback) {
 
     pool.getConnection(function (err, dbConnection) {
+        console.log(dbConnection);
         dbConnection.release();
         if (err) throw err;
 
