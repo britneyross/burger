@@ -1,22 +1,24 @@
-var express = require("express");
+const express = require("express");
+const router = require("./controllers/burgers_controller");
+const handlebars = require('express-handlebars');
 
-var PORT = process.env.PORT || 8000;
 var app = express();
 
-app.use(express.static("public"));
+var PORT = process.env.PORT || 8080;
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-var exphbs = require("express-handlebars");
+app.use('/', router)
 
-app.engine("handlebars", exphbs({ defaultLayout: "main" }));
-app.set("view engine", "handlebars");
+//Sets our app to use the handlebars engine
+app.set('view engine', 'handlebars');
 
-var routes = require("./controllers/burgersController.js");
-
-app.use(routes);
+//Sets handlebars configurations (we will go through them later on)
+app.engine('handlebars', handlebars({
+    layoutsDir: __dirname + '/views/layouts',
+}));
 
 app.listen(PORT, function() {
-  console.log("Listening on port:%s", PORT);
+    console.log("App listening on PORT: " + PORT);
 });

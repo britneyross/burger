@@ -1,47 +1,135 @@
 <div class="container">
-	<div class="row">
-		<div class="col-md-12 text-center" id="top-bar">
-			 <img src="/assets/images/burger.jpg" height= "300px" width="300px" alt="burger" />
-			<h1> Eat-Da-Burger! </h1>
-		</div>
-		<div class="col-md-6 text-center" class="task">
-			<div class="row">
-			  {{#each burger_data}}
-			  	{{#unless this.devoured}}
-				<div class="col-md-9 text-center">
+    <div class="row">
+        <div class="col">
+            <form id="burgerForm">
+                <div class="form-group">
+                    <h3><strong>Add a Burger</strong></h3>
 
-				  		
-				</div>
-				<div class="col-md-3 text-center">
-					<form class="devour-form button-size">
-						<input type="hidden" class="burger_id" type="text" ><br>
-						<button type="submit" class="btn btn-default">Devour it!</button>
-					</form>
-				</div>
-				{{/unless}}
-			  {{/each}}
-			</div>
-		</div>
-		<div class="col-md-6 text-center" class="task">
-			  {{#each burger_data}}
-			  	{{#if this.devoured}}
-			  		<input class="form-control" type="text" >
-				{{/if}}
-			  {{/each}}
-		</div>
-	</div>
+                    <label for="name"><h4>Name (Required)</h4></label>
+                    <input name="name" type="text" class="form-control" id="name" placeholder="name" required>
+                    <Br>
+                    <button type="submit" class="btn btn-primary">Add Burger</button>
+                </div>
+            </form>
+        </div>
+        <div class="col">
+            <table id="burgerTable" class="table">
+                <thead>
+                <tr>
+                    <!--<th scope="col">ID</th>-->
+                    <th scope="col">Name</th>
+                    <th scope="col">Eaten</th>
+                </tr>
+                </thead>
+                <tbody id="burgerList">
+                <tr>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
 </div>
 
-<div class="container">
-	<div class="row">
-		<div class="col-md-12 text-center enter_section">
-			<form action="/burgers/create" method="POST">
-				<input type="text" class="form-control" name="burger_name" value="" id="enter_text">
-				<button type="submit" class="btn btn-primary" id="text-enter-button">Submit</button>
-			</form>
-			<p>Enter a burger you want to eat Click the "Submit" button.</p>
-		</div>
-	</div>
-</div>
 
-    		
+<script>
+
+    var addNewBurgerRow = (table, item) => {
+        let newRow = table.insertRow(-1);
+
+        newRow.setAttribute("id", item.id);
+        // let newCell = newRow.insertCell(0);
+
+        // newRow.insertCell(0).appendChild(document.createTextNode(item.id));
+        newRow.insertCell(0).appendChild(document.createTextNode(item.burger_name));
+
+        if (item.devoured == 0) {
+            let eatButton = document.createElement("button");
+
+            eatButton.textContent = "EAT";
+            eatButton.setAttribute("type", "button");
+            eatButton.setAttribute("class", "btn btn-primary");
+            eatButton.setAttribute("id", "btn" + item.id);
+            eatButton.addEventListener("click", () => {
+                // console.log("Fired" + item.id);
+
+                var eatBurger = async (e) => {
+                    let response = await fetch('/eatBurger', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({id: item.id})
+                    });
+
+                    if (response.ok) {
+                        let json = await response.text();
+                        console.log(json);
+                        let btn = document.getElementById("btn" + item.id);
+                        btn.remove();
+
+                        let row = document.getElementById(item.id);
+                        row.insertCell(1).appendChild(document.createTextNode("Eaten!"));
+
+                    } else {
+                        console.log("HTTP-Error: " + response.status);
+                    }
+
+                }
+
+                eatBurger();
+            });
+
+
+            newRow.insertCell(1).appendChild(eatButton);
+        } else {
+            newRow.insertCell(1).appendChild(document.createTextNode("Eaten!"));
+        }
+    }
+
+    var getTableData = async (e) => {
+        let burgerData = await fetch('/burgers', {
+            method: 'get'
+        });
+
+        if (burgerData.ok) {
+            let json = await burgerData.json();
+            // console.log(json);
+            for (const property in json) {
+                let item = json[property];
+                addNewBurgerRow(burgerList, item);
+            }
+
+
+        } else {
+            console.log("HTTP-Error: " + response.status);
+        }
+    };
+
+    getTableData();
+
+
+    burgerForm.onsubmit = async (e) => {
+        e.preventDefault();
+
+        var fData = new FormData(burgerForm);
+        const data = new URLSearchParams(fData);
+
+        let response = await fetch('/addBurger', {
+            method: 'POST',
+            body: data
+        });
+
+        if (response.ok) {
+            let json = await response.json();
+
+            addNewBurgerRow(burgerList, {
+                id: json.id,
+                burger_name: fData.get("name"),
+                devoured: 0
+            })
+        } else {
+            console.log("HTTP-Error: " + response.status);
+        }
+    };
+</script>
