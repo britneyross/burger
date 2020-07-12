@@ -4,22 +4,6 @@ body {
     background-color: rgb(240, 237, 90);
   }
   
-  #top-bar {
-    margin-top: 28px;
-  }
-  
-  .spacing-reset {
-    padding: 0;
-    margin: 0;
-    border: 0;
-  }
-  
-  .list-reset {
-    padding: 0;
-    margin: 0;
-    list-style-type: none;
-    border: 0;
-  }
   
   @media (min-width: 1200px) {
     .container {
@@ -33,25 +17,12 @@ body {
     }
   }
   
-  .enter_section {
-    margin-top: 30px;
-    margin-bottom: 30px;
-    text-align: center;
-  }
   
-  #enter_text {
-    width: 400px;
-    height: 80px;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    margin: auto;
-    font-size: 38px;
-  }
-  
-  .task {
+  .table {
     border-color: black;
     border-style: solid;
     border-width: 3px;
+    margin-top: 20px;;
   }
   
   .button-size {
@@ -62,13 +33,15 @@ body {
       background-color: #f30;
   }
   
-  #text-enter-button {
-    margin-top: 10px;
-    margin-bottom: 18px;
-  }
   
-  h1 {
+  h4 {
     color: #f30;
+    margin-top: 10px;
+  }
+
+  h3 {
+    color: #f30;
+    margin-top: 10px;
   }
 
   p {

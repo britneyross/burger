@@ -11,6 +11,8 @@ app.use(express.json());
 
 app.use('/', router)
 
+app.use(express.static("public"));
+
 //Sets our app to use the handlebars engine
 app.set('view engine', 'handlebars');
 
